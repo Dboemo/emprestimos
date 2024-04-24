@@ -1,0 +1,268 @@
+create table emprestimos_log (  
+      log_id int auto_increment primary key,  
+	  old_id_usuario int,
+	  old_id_equipamento int,
+      old_data_emprestimo date,
+	  new_id_usuario int, 
+	  new_id_equipamento int, 
+      new_data_emprestimo date,  
+      operacao varchar(50),  
+      usuario varchar(50),
+	  equipamento varchar(50),
+	  setor varchar(50),
+	  hora timestamp  
+ );  
+ 
+
+
+create trigger emprestimo_log_insert after insert on emprestimos  
+ for each row  
+           insert into emprestimos_log(
+		   log_id, 
+		   old_id_usuario, 
+		   old_id_equipamento, 
+		   old_data_emprestimo, 
+		   new_id_usuario, 
+		   new_id_equipamento, 
+		   new_data_emprestimo, 
+		   operacao, 
+		   usuario, 
+		   equipamento,
+           setor,		   
+		   hora)   
+           values(
+		   null,
+		   0,
+		   0,
+		   0,		   
+		   new.usuario, 
+		   new.equipamento,
+		   new.data,
+		   'INCLUSÃO',
+		   (select nome from usuarios where id=new.usuario),
+		   (select descricao from equipamentos where id=new.equipamento),
+		   (select setor from equipamentos where id=new.equipamento),
+		   now());  
+
+create trigger emprestimo_log_update after update on emprestimos  
+ for each row  
+           insert into emprestimos_log(
+		   log_id, 
+		   old_id_usuario, 
+		   old_id_equipamento, 
+		   old_data_emprestimo, 
+		   new_id_usuario, 
+		   new_id_equipamento, 
+		   new_data_emprestimo, 
+		   operacao, 
+		   usuario, 
+		   equipamento,
+           setor,		   
+		   hora)   
+           values(
+		   null,
+		   old.usuario,
+		   old.equipamento,
+		   old.data,		   
+		   new.usuario, 
+		   new.equipamento,
+		   new.data,
+		   'INCLUSÃO',
+		   (select nome from usuarios where id=new.usuario),
+		   (select descricao from equipamentos where id=new.equipamento),
+		   (select setor from equipamentos where id=new.equipamento),
+		   now()); 				 
+
+create trigger emprestimo_log_delete after delete on emprestimos  
+ for each row  
+           insert into emprestimos_log(
+		   log_id, 
+		   old_id_usuario, 
+		   old_id_equipamento, 
+		   old_data_emprestimo, 
+		   new_id_usuario, 
+		   new_id_equipamento, 
+		   new_data_emprestimo, 
+		   operacao, 
+		   usuario, 
+		   equipamento,
+           setor,		   
+		   hora)   
+           values(
+		   null,
+		   old.usuario,
+		   old.equipamento,
+		   old.data,		   
+		   0, 
+		   0,
+		   0,
+		   'EXCLUSAO',
+		   (select nome from usuarios where id=old.usuario),
+		   (select descricao from equipamentos where id=old.equipamento),
+		   (select setor from equipamentos where id=old.equipamento),
+		   now()); 
+		   
+create table usuarios_log (  
+      log_id int auto_increment primary key,  
+	  old_id int,
+	  old_nome varchar(50),
+      old_senha varchar(50),
+	  new_id int, 
+	  new_nome varchar(50), 
+      new_senha varchar(50),  
+      operacao varchar(50),  
+	  hora timestamp  
+ );  
+
+create trigger usuario_log_insert after insert on usuarios  
+ for each row  
+           insert into usuarios_log(
+			log_id ,  
+			old_id,
+			old_nome,
+			old_senha,
+			new_id, 
+			new_nome, 
+			new_senha,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   0,
+		   "-",
+		   "-",		   
+		   new.id, 
+		   new.nome,
+		   new.senha,
+		   'INCLUSAO',
+		   now());  
+
+create trigger usuario_log_update after update on usuarios  
+ for each row  
+           insert into usuarios_log(
+			log_id ,  
+			old_id,
+			old_nome,
+			old_senha,
+			new_id, 
+			new_nome, 
+			new_senha,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   old.id,
+		   old.nome,
+		   old.senha,		   
+		   new.id, 
+		   new.nome,
+		   new.senha,
+		   'ALTERACAO',
+		   now());  			 
+
+create trigger usario_log_delete after delete on usuarios  
+ for each row  
+insert into usuarios_log(
+			log_id ,  
+			old_id,
+			old_nome,
+			old_senha,
+			new_id, 
+			new_nome, 
+			new_senha,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   old.id,
+		   old.nome,
+		   old.senha,		   
+		   0, 
+		   "-",
+		   "-",
+		   'EXCLUSAO',
+		   now());  			
+
+create table equipamentos_log (  
+      log_id int auto_increment primary key,  
+	  old_id int,
+	  old_descricao varchar(50),
+      old_setor varchar(50),
+	  new_id int, 
+	  new_descricao varchar(50), 
+      new_setor varchar(50),  
+      operacao varchar(50),  
+	  hora timestamp  
+ );  
+
+create trigger equipamento_log_insert after insert on equipamentos  
+ for each row  
+           insert into equipamentos_log(
+			log_id ,  
+			old_id,
+			old_descricao,
+			old_setor,
+			new_id, 
+			new_descricao, 
+			new_setor,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   0,
+		   "-",
+		   "-",		   
+		   new.id, 
+		   new.descricao,
+		   new.setor,
+		   'INCLUSAO',
+		   now());  
+
+create trigger equipamento_log_update after update on equipamentos  
+ for each row  
+           insert into equipamentos_log(
+			log_id ,  
+			old_id,
+			old_descricao,
+			old_setor,
+			new_id, 
+			new_descricao, 
+			new_setor,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   old.id,
+		   old.descricao,
+		   old.setor,		   
+		   new.id, 
+		   new.descricao,
+		   new.setor,
+		   'ALTERACAO',
+		   now());  			 
+
+create trigger equipamento_log_delete after delete on equipamentos  
+ for each row  
+           insert into equipamentos_log(
+			log_id ,  
+			old_id,
+			old_descricao,
+			old_setor,
+			new_id, 
+			new_descricao, 
+			new_setor,  
+			operacao,  
+	        hora)   
+           values(
+		   null,
+		   old.id,
+		   old.descricao,
+		   old.setor,	   
+		   0, 
+		   "-",
+		   "-",
+		   'EXCLUSAO',
+		   now());  	
+
+
+
